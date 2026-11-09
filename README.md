@@ -82,4 +82,4 @@ Install once per machine so any Claude Code session can apply, restore, or port 
 /plugin install claude-vscode-activity@claude-vscode-activity
 ```
 
-Then ask, for example, "the Claude Code extension updated, update the activity patch". The skill keeps a working clone at `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), because backups and porting edits must not live in the plugin cache.
+Then ask, for example, "the Claude Code extension updated, update the activity patch". The skill keeps a working clone at `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), because backups and porting edits must not live in the plugin cache. A session-start hook checks the patch silently and only speaks up (asking first) when the clone is missing or the extension needs re-patching.
