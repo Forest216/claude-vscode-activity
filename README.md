@@ -75,11 +75,13 @@ The complete local validation covers 25 tests: status cases, patched component o
 
 ## Claude Code plugin
 
-Install once per machine so any Claude Code session can apply, restore, or port the patch:
+Install once per machine so any Claude Code session can apply, restore, or port the patch. In a terminal (needs the `claude` CLI):
 
+```powershell
+claude plugin marketplace add Forest216/claude-vscode-activity
+claude plugin install claude-vscode-activity@claude-vscode-activity
 ```
-/plugin marketplace add Forest216/claude-vscode-activity
-/plugin install claude-vscode-activity@claude-vscode-activity
-```
+
+Or type the same commands as slash commands in the Claude Code chat box (not in PowerShell): `/plugin marketplace add Forest216/claude-vscode-activity`, then `/plugin install claude-vscode-activity@claude-vscode-activity`. Start a new session afterwards.
 
 Then ask, for example, "the Claude Code extension updated, update the activity patch". The skill keeps a working clone at `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), because backups and porting edits must not live in the plugin cache. A session-start hook checks the patch silently and only speaks up (asking first) when the clone is missing or the extension needs re-patching.
