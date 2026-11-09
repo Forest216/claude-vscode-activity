@@ -21,6 +21,12 @@ const SUPPORTED = {
     create: 'm', container: 'k', count: 'j$', waiting: 'f8', dot: 'sVe',
     styles: 'Zs', pillStyles: 'tU', statusDot: 'df',
   },
+  '2.1.317': {
+    hash: '3f17c05525aaf248356a16019071dc2b58dec52a92540f715f26eb461639f77e',
+    component: 'GMt', pill: 'GNn', session: 'e', open: 't', hook: 'Dt',
+    create: 'm', container: 'k', count: 'Z$', waiting: 'f8', dot: 'mVe',
+    styles: 'ea', pillStyles: 'oU', statusDot: 'ff',
+  },
 };
 
 export const digest = (content) => createHash('sha256').update(content).digest('hex');

@@ -72,3 +72,14 @@ node --test .\patch.test.mjs
 ```
 
 The complete local validation covers 25 tests: status cases, patched component output, syntax of both complete bundles, click-handler preservation, idempotent application, and byte-exact restore. A brief live subagent/background-task demo was also checked in VS Code. Other versions and layouts are not claimed to be validated; inspect the actual UI after a safe reload.
+
+## Claude Code plugin
+
+Install once per machine so any Claude Code session can apply, restore, or port the patch:
+
+```
+/plugin marketplace add Forest216/claude-vscode-activity
+/plugin install claude-vscode-activity@claude-vscode-activity
+```
+
+Then ask, for example, "the Claude Code extension updated, update the activity patch". The skill keeps a working clone at `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), because backups and porting edits must not live in the plugin cache.

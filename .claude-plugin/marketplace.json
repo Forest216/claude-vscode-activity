@@ -1,0 +1,11 @@
+{
+  "name": "claude-vscode-activity",
+  "owner": { "name": "Xiaohang Fu" },
+  "plugins": [
+    {
+      "name": "claude-vscode-activity",
+      "description": "Apply, restore, or port the local VS Code activity-indicator patch for the Claude Code extension.",
+      "source": "./"
+    }
+  ]
+}

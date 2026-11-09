@@ -139,7 +139,7 @@ function installedOriginal(version) {
 }
 
 for (const [version, name, pill] of [
-  ['2.1.312', 'Dy0', 'Nv5'], ['2.1.314', 'NMt', 'SNn'],
+  ['2.1.312', 'Dy0', 'Nv5'], ['2.1.314', 'NMt', 'SNn'], ['2.1.317', 'GMt', 'GNn'],
 ]) {
   test(`${version}: patch parses and preserves the task-map click handler`, (t) => {
     const original = installedOriginal(version);
@@ -160,9 +160,9 @@ for (const [version, name, pill] of [
     const waiting = (requests) => new Set(requests.map((request) => request.agentId));
     const dot = () => 'idle';
     const render = new Function(
-      'claudeLocalActivitySummary', 'f0', 'Dt', 'F', 'm', 'ol', 'j$', 'jR', 'f8', 'fc1', 'sVe', pill,
+      'claudeLocalActivitySummary', 'f0', 'Dt', 'F', 'm', 'ol', 'j$', 'Z$', 'jR', 'f8', 'fc1', 'sVe', 'mVe', pill,
       `${componentSource(patched, name)};return ${name};`,
-    )(summarize, noOp, noOp, create, create, count, count, waiting, waiting, dot, dot, 'pill');
+    )(summarize, noOp, noOp, create, create, count, count, count, waiting, waiting, dot, dot, dot, 'pill');
     const onOpen = () => 'map opened';
     const rendered = render({ session: session({ visiblyBusy: signal(true) }), onOpen });
     assert.equal(rendered.props.activity.label, 'Main working · Subagents 0 · Background 0');
@@ -171,9 +171,9 @@ for (const [version, name, pill] of [
     assert.equal(rendered.props.onOpen(), 'map opened');
 
     const renderPill = new Function(
-      'R', 'k', 'F', 'm', 'r7', 'Zs', 'Ym', 'tU', 'W91', 'tle', 'qY', 'df',
+      'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Ym', 'tU', 'oU', 'W91', 'tle', 'qY', 'df', 'ff',
       `${componentSource(patched, pill)};return ${pill};`,
-    )(create, create, create, create, {}, {}, {}, {}, noOp, noOp, noOp, noOp);
+    )(create, create, create, create, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp);
     const button = renderPill(rendered.props);
     assert.equal(button.type, 'button');
     assert.equal(button.props.onClick, onOpen);
