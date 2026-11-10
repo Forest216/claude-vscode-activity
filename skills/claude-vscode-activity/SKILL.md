@@ -54,12 +54,16 @@ When `check` says `Unsupported extension version X`:
 3. The pill function `P` follows directly: `return K("button",{...className:\`${S.modelPill} ${Q.agentsPill}\`...m(F,{state:t,className:Q.dot})`
    giving container K, styles S, pillStyles Q, statusDot F. Confirm `F` is
    `function F({state:e,ring:t=!1,title:n,className:i})`.
-4. If either shape differs (not just renamed identifiers), stop and tell the
-   user; the patch needs a real review, not a rename.
+   Also find where the footer renders the component: `V&&m(C,{session:e,onOpen:L})`,
+   with `V` defined just before as `,V=L!==void 0&&A.size>0,` where
+   `A=e.agentMapAgents.value`. That hides the pill until a subagent exists;
+   record `alwaysShow: [',V=L!==void 0&&A.size>0,', ',V=L!==void 0,']`.
+4. If any of these shapes differs (not just renamed identifiers), stop and tell
+   the user; the patch needs a real review, not a rename.
 5. Confirm `activity.mjs` session fields still exist in the bundle
    (`grep -o session\. activity.mjs`, then grep each field name).
 6. Add `'X': { hash, component, pill, session, open, hook, create, container,
-   count, waiting, dot, styles, pillStyles, statusDot }` to `SUPPORTED` in
+   count, waiting, dot, styles, pillStyles, statusDot, alwaysShow }` to `SUPPORTED` in
    `patch.mjs`. Add `['X', C, P]` to the version loop in `patch.test.mjs`, and
    any new identifiers to the two `new Function(...)` mock argument lists
    (count/waiting/dot get the matching mock, styles get `{}`, statusDot gets

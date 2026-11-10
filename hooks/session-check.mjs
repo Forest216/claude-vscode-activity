@@ -18,6 +18,8 @@ if (!fs.existsSync(path.join(clone, 'patch.mjs'))) {
   note(`The VS Code activity indicator patch is not set up on this machine (no working clone at ${clone}).`);
   process.exit(0);
 }
+// Pick up patch fixes pushed from other machines; fast-forward only, failures ignored.
+spawnSync('git', ['-C', clone, 'pull', '--ff-only', '-q'], { timeout: 5000, stdio: 'ignore' });
 const result = spawnSync(process.execPath, [path.join(clone, 'patch.mjs'), 'check'], {
   cwd: clone, encoding: 'utf8', timeout: 12000,
 });

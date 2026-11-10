@@ -149,6 +149,9 @@ for (const [version, name, pill] of [
     }
     const patched = patchBundle(original, version);
     assert.notEqual(patched, original);
+    if (version === '2.1.317') {
+      assert.ok(patched.includes(',tt=l!==void 0,') && !patched.includes('De.size>0'), 'pill shown without subagents');
+    }
     const syntax = spawnSync(process.execPath, ['--input-type=module', '--check'], {
       input: patched, encoding: 'utf8',
     });

@@ -26,6 +26,8 @@ const SUPPORTED = {
     component: 'GMt', pill: 'GNn', session: 'e', open: 't', hook: 'Dt',
     create: 'm', container: 'k', count: 'Z$', waiting: 'f8', dot: 'mVe',
     styles: 'ea', pillStyles: 'oU', statusDot: 'ff',
+    // The footer hides the pill until a subagent exists; keep it visible so Main/Background show too.
+    alwaysShow: [',tt=l!==void 0&&De.size>0,', ',tt=l!==void 0,'],
   },
 };
 
@@ -83,6 +85,7 @@ export function patchBundle(source, version) {
   let patched = replaceOnce(source, originalComponent,
     `${MARKER}\n${claudeLocalActivitySummary.toString()}\n${component}`);
   patched = replaceOnce(patched, originalPill, pill);
+  if (spec.alwaysShow) patched = replaceOnce(patched, ...spec.alwaysShow);
   return patched;
 }
 
@@ -153,6 +156,9 @@ export function run(command, extension) {
     if (metadata.extension !== directory || digest(original) !== metadata.patchedHash ||
         digest(fs.readFileSync(backupFile, 'utf8')) !== metadata.originalHash) {
       throw new Error('Patched file or backup no longer matches recorded checksums.');
+    }
+    if (patchBundle(fs.readFileSync(backupFile, 'utf8'), version) !== original) {
+      throw new Error(`Patched by an older version of this script: run restore, then apply. ${directory}`);
     }
     console.log(`Already patched and verified: ${directory}`);
     return;

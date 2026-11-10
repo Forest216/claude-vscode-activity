@@ -16,6 +16,7 @@ This is an unofficial local UI patch, not a separate VS Code extension or Claude
 - Independent dots: Main reflects only the main assistant, Subagents reflects the extension's child-agent status (including waits/failures), and Background is active only while background tasks remain. An idle main assistant stays grey even when other work continues.
 - The aggregate state remains only in the button's existing data attribute; there is no visible overall dot to confuse with the main assistant.
 - Clicking still opens the native Agent map. Hover text and the accessible label describe the complete status; long labels can truncate in narrow layouts.
+- The button stays visible even before any subagent has run (2.1.317+); unpatched, the extension hides it until the session has a subagent.
 
 This reports the extension's existing state, not independent process health or a completion percentage.
 
