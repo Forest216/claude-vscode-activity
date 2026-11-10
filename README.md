@@ -20,41 +20,48 @@ This is an unofficial local UI patch, not a separate VS Code extension or Claude
 
 This reports the extension's existing state, not independent process health or a completion percentage.
 
-## Install and apply
+## Install
 
-Requires Git, Node.js 20 or newer, and a supported official Claude Code VS Code extension installation. No package installation is needed. This is a version-specific local prototype, not an official or supported extension feature; review the scripts and your applicable software terms and policies before use.
+Requires Git, Node.js 20 or newer, and a supported official Claude Code VS Code extension installation. This is a version-specific local prototype, not an official or supported extension feature; review the scripts and your applicable software terms and policies before use.
 
-In PowerShell:
-
-```powershell
-git clone https://github.com/Forest216/claude-vscode-activity.git
-cd claude-vscode-activity
-node .\patch.mjs check
-node .\patch.mjs apply
-```
-
-To restore the original bundle from this checkout's local backup:
+Install the Claude Code plugin once per machine. In a terminal (needs the `claude` CLI):
 
 ```powershell
-node .\patch.mjs restore
+claude plugin marketplace add Forest216/claude-vscode-activity
+claude plugin install claude-vscode-activity@claude-vscode-activity
 ```
 
-By default, the script targets the version registered in `%USERPROFILE%\.vscode\extensions\extensions.json`. To target a specific installation:
+Or type the same two commands with a leading `/` in the Claude Code chat box (not in PowerShell): `/plugin marketplace add Forest216/claude-vscode-activity`, then `/plugin install claude-vscode-activity@claude-vscode-activity`.
 
-```powershell
-node .\patch.mjs check --extension "$env:USERPROFILE\.vscode\extensions\anthropic.claude-code-2.1.314-win32-x64"
-```
+Start a new Claude Code session. A session-start hook checks the patch; when it is missing or out of date, Claude asks once whether to set it up. Answer yes and it clones a working copy to `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), applies the patch, and asks you to run **Developer: Reload Window**. Reloading can interrupt current sessions, so nothing reloads automatically.
 
-After applying or restoring, wait for important work to finish, then use **Developer: Reload Window** in VS Code. Reloading can interrupt current sessions; the script never reloads automatically.
+You can also just ask, for example, "install the activity patch", "restore the activity patch", or "the Claude Code extension updated, update the activity patch".
+
+## Updates
+
+- Patch fixes: the hook fast-forwards the working clone at each session start, then re-checks. A patch applied by an older script is reported and re-applied after you agree.
+- Claude Code extension updates: the new bundle replaces the patch and is refused until its fingerprint and anchors are reviewed. Claude ports it when you agree, then asks before pushing the new version here.
+- Plugin updates (the hook and skill themselves) are not automatic for third-party marketplaces. Turn on auto-update in `/plugin` → Marketplaces → `claude-vscode-activity`, or run `claude plugin marketplace update claude-vscode-activity` and `claude plugin update claude-vscode-activity@claude-vscode-activity`.
 
 ## Compatibility and backup
 
-- Reviewed bundle fingerprints: **2.1.312** and **2.1.314**, Windows x64.
+- Reviewed bundle fingerprints: **2.1.312**, **2.1.314**, and **2.1.317**, Windows x64.
 - Unsupported versions or modified bundles are refused before changing the extension.
-- `backups/<version>-<installation-id>/` holds the exact original bundle and checksum metadata.
+- `backups/<version>-<installation-id>/` in the working clone holds the exact original bundle and checksum metadata. It is gitignored: do not publish the proprietary extension bundles.
 - Restore refuses to overwrite an extension that changed after patching.
-- Extension updates may replace the patch. Run `check` afterward; a new version requires reviewing its anchors and fingerprint, not simply changing the version number.
-- Keep backups locally. Do not publish the proprietary extension bundles. Only the original patch scripts and their tests should go in a separate repository.
+
+## Manual use (without the plugin)
+
+From a clone of this repository:
+
+```powershell
+node .\patch.mjs check
+node .\patch.mjs apply
+node .\patch.mjs restore
+node .\patch.mjs check --extension "$env:USERPROFILE\.vscode\extensions\anthropic.claude-code-2.1.317-win32-x64"
+```
+
+By default the script targets the version registered in `%USERPROFILE%\.vscode\extensions\extensions.json`. Reload the VS Code window after applying or restoring.
 
 ## Tests
 
@@ -62,27 +69,12 @@ After applying or restoring, wait for important work to finish, then use **Devel
 node --test .\patch.test.mjs
 ```
 
-The 22 standalone tests need no extension installation. Three integration tests use locally installed original bundles and explicitly skip when those bundles or their backups are unavailable; skips do not mean extension compatibility was verified. Proprietary test fixtures are not included.
+The 22 standalone tests need no extension installation. Four integration tests use locally installed original bundles and skip when those bundles or their backups are unavailable; skips do not mean compatibility was verified. Proprietary test fixtures are not included.
 
-For integration testing against another local extensions directory or an existing backup folder:
+To use another extensions directory or backup folder:
 
 ```powershell
 $env:CLAUDE_VSCODE_TEST_EXTENSIONS = "$env:USERPROFILE\.vscode\extensions"
 $env:CLAUDE_VSCODE_TEST_BACKUPS = 'D:\local-only\claude-activity-backups'
 node --test .\patch.test.mjs
 ```
-
-The complete local validation covers 25 tests: status cases, patched component output, syntax of both complete bundles, click-handler preservation, idempotent application, and byte-exact restore. A brief live subagent/background-task demo was also checked in VS Code. Other versions and layouts are not claimed to be validated; inspect the actual UI after a safe reload.
-
-## Claude Code plugin
-
-Install once per machine so any Claude Code session can apply, restore, or port the patch. In a terminal (needs the `claude` CLI):
-
-```powershell
-claude plugin marketplace add Forest216/claude-vscode-activity
-claude plugin install claude-vscode-activity@claude-vscode-activity
-```
-
-Or type the same commands as slash commands in the Claude Code chat box (not in PowerShell): `/plugin marketplace add Forest216/claude-vscode-activity`, then `/plugin install claude-vscode-activity@claude-vscode-activity`. Start a new session afterwards.
-
-Then ask, for example, "the Claude Code extension updated, update the activity patch". The skill keeps a working clone at `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), because backups and porting edits must not live in the plugin cache. A session-start hook checks the patch silently and only speaks up (asking first) when the clone is missing or the extension needs re-patching.
