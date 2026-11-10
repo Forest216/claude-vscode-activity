@@ -33,13 +33,15 @@ claude plugin install claude-vscode-activity@claude-vscode-activity
 
 Or type the same two commands with a leading `/` in the Claude Code chat box (not in PowerShell): `/plugin marketplace add Forest216/claude-vscode-activity`, then `/plugin install claude-vscode-activity@claude-vscode-activity`.
 
-Start a new Claude Code session. A session-start hook checks the patch; when it is missing or out of date, Claude asks once whether to set it up. Answer yes and it clones a working copy to `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), applies the patch, and asks you to run **Developer: Reload Window**. Reloading can interrupt current sessions, so nothing reloads automatically.
+Start a new Claude Code session and send any message, such as `hello`; no patch-specific request is needed. A synchronous first-message hook checks the patch and, if attention is needed, asks Claude to offer help in that reply. The hook does not start a conversation by itself. After you agree, Claude can clone a working copy to `Q:\Code\claude-vscode-activity` (or `~/claude-vscode-activity` without `Q:\Code`), apply the patch, and ask you to run **Developer: Reload Window**. Reloading can interrupt current sessions, so nothing reloads automatically.
 
 You can also just ask, for example, "install the activity patch", "restore the activity patch", or "the Claude Code extension updated, update the activity patch".
 
 ## Updates
 
-- Patch fixes: the hook fast-forwards the working clone at each session start, then re-checks. A patch applied by an older script is reported and re-applied after you agree.
+- Patch fixes: on the first message, the hook attempts a fast-forward of the working clone, then checks local files even if the network update fails. A patch applied by an older script is reported; changes still require your agreement.
+- Repeated messages do not repeat the check. Startup, resume, and `/clear` reset it. Small diagnostic receipts in `~/.claude/activity-hook-state/` contain only a hashed session filename, time, plugin version, outcome, and subprocess status—not prompts or transcripts. Receipts expire after seven days and are capped at 128; eviction can cause another check.
+- An auxiliary `systemMessage` requests a notice, but its rendering depends on the host. A model reply is still needed for the offer. If it is absent after an ordinary first message, inspect hook loading and the diagnostic receipt; do not assume installation failed.
 - Claude Code extension updates: the new bundle replaces the patch and is refused until its fingerprint and anchors are reviewed. Claude ports it when you agree, then asks before pushing the new version here.
 - Plugin updates (the hook and skill themselves) are not automatic for third-party marketplaces. Turn on auto-update in `/plugin` → Marketplaces → `claude-vscode-activity`, or run `claude plugin marketplace update claude-vscode-activity` and `claude plugin update claude-vscode-activity@claude-vscode-activity`.
 
@@ -66,8 +68,10 @@ By default the script targets the version registered in `%USERPROFILE%\.vscode\e
 ## Tests
 
 ```powershell
-node --test .\patch.test.mjs
+node --test .\patch.test.mjs .\hooks\session-check.test.mjs
 ```
+
+Hook tests cover arbitrary first messages, per-session deduplication, resume resets, quiet success, missing clones, check errors, and bounded diagnostic state. They use temporary directories and stub subprocesses: they do not prove that VS Code loaded the hook or that the model displayed the offer. Validate that separately in the actual VS Code host with an ordinary first message.
 
 The 22 standalone tests need no extension installation. Four integration tests use locally installed original bundles and skip when those bundles or their backups are unavailable; skips do not mean compatibility was verified. Proprietary test fixtures are not included.
 

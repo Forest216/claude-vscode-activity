@@ -12,10 +12,13 @@ description: >-
 Unofficial local patch to the installed Claude Code extension's `webview/index.js`.
 It only changes the agent-map button rendering.
 
-A SessionStart hook in this plugin runs `patch.mjs check` and adds a
-`[claude-vscode-activity]` note only when the clone is missing or the patch is
-not applied. When you see it, ask the user once whether to set up, apply, or
-port the patch; do nothing without their yes.
+A synchronous UserPromptSubmit hook checks the patch on the first message
+in a session, including an ordinary greeting. SessionStart on startup, resume,
+or clear resets the check receipt. A `[claude-vscode-activity]` note means the
+clone is missing or the patch needs attention: in the current reply, briefly
+offer to set up, apply, or port it, then address the user's message. Do not
+require them to name the patch. Wait for their consent before making changes.
+The hook's systemMessage is an auxiliary notice; its display depends on the host.
 
 ## Working clone (never run from the plugin cache)
 
