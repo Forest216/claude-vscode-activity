@@ -140,6 +140,7 @@ function installedOriginal(version) {
 
 for (const [version, name, pill] of [
   ['2.1.312', 'Dy0', 'Nv5'], ['2.1.314', 'NMt', 'SNn'], ['2.1.317', 'GMt', 'GNn'],
+  ['2.1.318', 'XMt', 'QNn'],
 ]) {
   test(`${version}: patch parses and preserves the task-map click handler`, (t) => {
     const original = installedOriginal(version);
@@ -152,6 +153,9 @@ for (const [version, name, pill] of [
     if (version === '2.1.317') {
       assert.ok(patched.includes(',tt=l!==void 0,') && !patched.includes('De.size>0'), 'pill shown without subagents');
     }
+    if (version === '2.1.318') {
+      assert.ok(patched.includes(',Ye=l!==void 0,') && !patched.includes('Ie.size>0'), 'pill shown without subagents');
+    }
     const syntax = spawnSync(process.execPath, ['--input-type=module', '--check'], {
       input: patched, encoding: 'utf8',
     });
@@ -163,9 +167,9 @@ for (const [version, name, pill] of [
     const waiting = (requests) => new Set(requests.map((request) => request.agentId));
     const dot = () => 'idle';
     const render = new Function(
-      'claudeLocalActivitySummary', 'f0', 'Dt', 'F', 'm', 'ol', 'j$', 'Z$', 'jR', 'f8', 'fc1', 'sVe', 'mVe', pill,
+      'claudeLocalActivitySummary', 'f0', 'Dt', 'F', 'm', 'ol', 'j$', 'Z$', 'X$', 'jR', 'f8', 'm8', 'fc1', 'sVe', 'mVe', 'vVe', pill,
       `${componentSource(patched, name)};return ${name};`,
-    )(summarize, noOp, noOp, create, create, count, count, count, waiting, waiting, dot, dot, dot, 'pill');
+    )(summarize, noOp, noOp, create, create, count, count, count, count, waiting, waiting, waiting, dot, dot, dot, dot, 'pill');
     const onOpen = () => 'map opened';
     const rendered = render({ session: session({ visiblyBusy: signal(true) }), onOpen });
     assert.equal(rendered.props.activity.label, 'Main working · Subagents 0 · Background 0');
@@ -174,9 +178,9 @@ for (const [version, name, pill] of [
     assert.equal(rendered.props.onOpen(), 'map opened');
 
     const renderPill = new Function(
-      'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Ym', 'tU', 'oU', 'W91', 'tle', 'qY', 'df', 'ff',
+      'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Qs', 'Ym', 'tU', 'oU', 'rU', 'W91', 'tle', 'qY', 'df', 'ff', 'hf',
       `${componentSource(patched, pill)};return ${pill};`,
-    )(create, create, create, create, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp);
+    )(create, create, create, create, {}, {}, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp, noOp);
     const button = renderPill(rendered.props);
     assert.equal(button.type, 'button');
     assert.equal(button.props.onClick, onOpen);
@@ -208,41 +212,43 @@ test('unknown version is refused without modification', () => {
   assert.throws(() => patchBundle('unchanged', '9.9.9'), /Unsupported/);
 });
 
-test('apply, repeat apply, guarded restore, and exact restore', (t) => {
-  const original = installedOriginal('2.1.314');
-  if (original === null) {
-    t.skip('Local 2.1.314 original bundle is unavailable; proprietary fixtures are not distributed.');
-    return;
-  }
-  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-activity-test-'));
-  const extension = path.join(temporary, 'extension');
-  fs.mkdirSync(path.join(extension, 'webview'), { recursive: true });
-  const key = digest(fs.realpathSync(extension).toLowerCase()).slice(0, 12);
-  const backupDirectory = path.join(ROOT, 'backups', `2.1.314-${key}`);
-  try {
-    fs.writeFileSync(path.join(extension, 'package.json'), JSON.stringify({
-      publisher: 'Anthropic', name: 'claude-code', version: '2.1.314',
-    }));
-    const target = path.join(extension, 'webview', 'index.js');
-    fs.writeFileSync(target, original);
-    run('check', extension);
-    assert.equal(fs.readFileSync(target, 'utf8'), original);
-    run('apply', extension);
-    const patched = fs.readFileSync(target, 'utf8');
-    assert.equal(patched, patchBundle(original, '2.1.314'));
-    assert.equal(fs.readFileSync(path.join(backupDirectory, 'index.js.original'), 'utf8'), original);
-    run('apply', extension);
-    assert.equal(fs.readFileSync(target, 'utf8'), patched);
-    fs.writeFileSync(target, patched + '\n// concurrent edit');
-    assert.throws(() => run('restore', extension), /refusing to overwrite/);
-    assert.equal(fs.readFileSync(target, 'utf8'), patched + '\n// concurrent edit');
-    fs.writeFileSync(target, patched);
-    run('restore', extension);
-    assert.equal(fs.readFileSync(target, 'utf8'), original);
-    run('restore', extension);
-  } finally {
-    // These are only directories created by this test, never installed extension files.
-    fs.rmSync(temporary, { recursive: true, force: true });
-    fs.rmSync(backupDirectory, { recursive: true, force: true });
-  }
-});
+for (const version of ['2.1.314', '2.1.318']) {
+  test(`${version}: apply, repeat apply, guarded restore, and exact restore`, (t) => {
+    const original = installedOriginal(version);
+    if (original === null) {
+      t.skip(`Local ${version} original bundle is unavailable; proprietary fixtures are not distributed.`);
+      return;
+    }
+    const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-activity-test-'));
+    const extension = path.join(temporary, 'extension');
+    fs.mkdirSync(path.join(extension, 'webview'), { recursive: true });
+    const key = digest(fs.realpathSync(extension).toLowerCase()).slice(0, 12);
+    const backupDirectory = path.join(ROOT, 'backups', `${version}-${key}`);
+    try {
+      fs.writeFileSync(path.join(extension, 'package.json'), JSON.stringify({
+        publisher: 'Anthropic', name: 'claude-code', version,
+      }));
+      const target = path.join(extension, 'webview', 'index.js');
+      fs.writeFileSync(target, original);
+      run('check', extension);
+      assert.equal(fs.readFileSync(target, 'utf8'), original);
+      run('apply', extension);
+      const patched = fs.readFileSync(target, 'utf8');
+      assert.equal(patched, patchBundle(original, version));
+      assert.equal(fs.readFileSync(path.join(backupDirectory, 'index.js.original'), 'utf8'), original);
+      run('apply', extension);
+      assert.equal(fs.readFileSync(target, 'utf8'), patched);
+      fs.writeFileSync(target, patched + '\n// concurrent edit');
+      assert.throws(() => run('restore', extension), /refusing to overwrite/);
+      assert.equal(fs.readFileSync(target, 'utf8'), patched + '\n// concurrent edit');
+      fs.writeFileSync(target, patched);
+      run('restore', extension);
+      assert.equal(fs.readFileSync(target, 'utf8'), original);
+      run('restore', extension);
+    } finally {
+      // These are only directories created by this test, never installed extension files.
+      fs.rmSync(temporary, { recursive: true, force: true });
+      fs.rmSync(backupDirectory, { recursive: true, force: true });
+    }
+  });
+}

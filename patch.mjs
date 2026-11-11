@@ -29,6 +29,13 @@ const SUPPORTED = {
     // The footer hides the pill until a subagent exists; keep it visible so Main/Background show too.
     alwaysShow: [',tt=l!==void 0&&De.size>0,', ',tt=l!==void 0,'],
   },
+  '2.1.318': {
+    hash: '82b65ed1b5537cee1d08016717e5cbd00cf8696dffa164e2cfadff77524dbfde',
+    component: 'XMt', pill: 'QNn', session: 'e', open: 't', hook: 'Dt',
+    create: 'm', container: 'k', count: 'X$', waiting: 'm8', dot: 'vVe',
+    styles: 'Qs', pillStyles: 'rU', statusDot: 'hf',
+    alwaysShow: [',Ye=l!==void 0&&Ie.size>0,', ',Ye=l!==void 0,'],
+  },
 };
 
 export const digest = (content) => createHash('sha256').update(content).digest('hex');
