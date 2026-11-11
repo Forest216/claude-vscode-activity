@@ -12,13 +12,17 @@ description: >-
 Unofficial local patch to the installed Claude Code extension's `webview/index.js`.
 It only changes the agent-map button rendering.
 
-A synchronous UserPromptSubmit hook checks the patch on the first message
-in a session, including an ordinary greeting. SessionStart on startup, resume,
-or clear resets the check receipt. A `[claude-vscode-activity]` note means the
-clone is missing or the patch needs attention: in the current reply, briefly
-offer to set up, apply, or port it, then address the user's message. Do not
-require them to name the patch. Wait for their consent before making changes.
-The hook's systemMessage is an auxiliary notice; its display depends on the host.
+An in-process prompt.submit module checks local patch files on the first
+ordinary message in each session. It remembers the session in module memory;
+later messages launch no checker processes and write no receipt files.
+Restarting/reloading the module or changing sessions permits a fresh check.
+A `[claude-vscode-activity]` context note means attention is needed: address
+the user's task, then briefly offer to set up, apply, or port the patch.
+Do not require them to name the patch. Wait for consent before making changes.
+Automatic checks never run git or call a model. After consent to handle the
+patch, use the working-clone steps below to pick up published patch fixes.
+The plugin is named vscode-activity-for-claude-code; its GitHub repository
+and persistent working-clone paths remain unchanged.
 
 ## Working clone (never run from the plugin cache)
 
@@ -34,7 +38,7 @@ must run from a persistent clone, not this plugin's install directory.
 
 From the clone:
 
-```
+```powershell
 node patch.mjs check      # reports Compatible, Already patched, or Unsupported
 node patch.mjs apply
 node patch.mjs restore
