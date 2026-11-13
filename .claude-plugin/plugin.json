@@ -1,6 +1,6 @@
 {
   "name": "vscode-activity-for-claude-code",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Apply, restore, or port the local VS Code activity-indicator patch for the Claude Code extension.",
   "repository": "https://github.com/Forest216/claude-vscode-activity"
 }
