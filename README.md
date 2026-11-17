@@ -60,7 +60,7 @@ You can also just ask, for example, "install the activity patch", "restore the a
 
 ## Compatibility and backup
 
-- Reviewed bundle fingerprints: **2.1.312**, **2.1.314**, **2.1.317**, and **2.1.318**, Windows x64.
+- Reviewed bundle fingerprints: **2.1.312**, **2.1.314**, **2.1.317**, **2.1.318**, and **2.1.319**, Windows x64.
 - Unsupported versions or modified bundles are refused before changing the extension.
 - `backups/<version>-<installation-id>/` in the working clone holds the exact original bundle and checksum metadata. It is gitignored: do not publish the proprietary extension bundles.
 - Restore refuses to overwrite an extension that changed after patching.
@@ -93,7 +93,7 @@ claude plugin validate .
 
 Module tests run through the hooks engine without model requests. They cover first-message context, ten subsequent messages with no checker processes, session resets, background-message filtering, and failure pass-through. Node tests use temporary directories and stub subprocesses to check the local helper; it writes no session receipts. These tests do not prove that the real VS Code host loaded the module or that the model displayed the offer. Verify that separately with an ordinary first message and a second message.
 
-The 22 standalone patch tests need no extension installation. Six integration tests use locally installed original bundles and skip when those bundles or their backups are unavailable; skips do not mean compatibility was verified. Proprietary test fixtures are not included.
+The 22 standalone patch tests need no extension installation. Eight integration tests use locally installed original bundles and skip when those bundles or their backups are unavailable; skips do not mean compatibility was verified. Proprietary test fixtures are not included.
 
 To use another extensions directory or backup folder:
 
