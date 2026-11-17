@@ -140,7 +140,7 @@ function installedOriginal(version) {
 
 for (const [version, name, pill] of [
   ['2.1.312', 'Dy0', 'Nv5'], ['2.1.314', 'NMt', 'SNn'], ['2.1.317', 'GMt', 'GNn'],
-  ['2.1.318', 'XMt', 'QNn'], ['2.1.319', 'kPt', 'jMn'],
+  ['2.1.318', 'XMt', 'QNn'], ['2.1.319', 'kPt', 'jMn'], ['2.1.322', 'BPt', 'dPn'],
 ]) {
   test(`${version}: patch parses and preserves the task-map click handler`, (t) => {
     const original = installedOriginal(version);
@@ -159,6 +159,10 @@ for (const [version, name, pill] of [
     if (version === '2.1.319') {
       assert.ok(patched.includes(',Ze=l!==void 0,') && !patched.includes('Ie.size>0'), 'pill shown without subagents');
     }
+    if (version === '2.1.322') {
+      assert.ok(patched.includes(',Ze=l!==void 0,') && !patched.includes(',Ze=l!==void 0&&De.size>0,'),
+        'pill shown without subagents');
+    }
     const syntax = spawnSync(process.execPath, ['--input-type=module', '--check'], {
       input: patched, encoding: 'utf8',
     });
@@ -170,9 +174,9 @@ for (const [version, name, pill] of [
     const waiting = (requests) => new Set(requests.map((request) => request.agentId));
     const dot = () => 'idle';
     const render = new Function(
-      'claudeLocalActivitySummary', 'f0', 'Dt', 'Nt', 'F', 'm', 'ol', 'j$', 'Z$', 'X$', 'oj', 'jR', 'f8', 'm8', 'y8', 'fc1', 'sVe', 'mVe', 'vVe', 'BVe', pill,
+      'claudeLocalActivitySummary', 'f0', 'Dt', 'Nt', 'Rt', 'F', 'm', 'ol', 'j$', 'Z$', 'X$', 'oj', 'aj', 'jR', 'f8', 'm8', 'y8', 'x8', 'fc1', 'sVe', 'mVe', 'vVe', 'BVe', 'XVe', pill,
       `${componentSource(patched, name)};return ${name};`,
-    )(summarize, noOp, noOp, noOp, create, create, count, count, count, count, count, waiting, waiting, waiting, waiting, dot, dot, dot, dot, dot, 'pill');
+    )(summarize, noOp, noOp, noOp, noOp, create, create, count, count, count, count, count, count, waiting, waiting, waiting, waiting, waiting, dot, dot, dot, dot, dot, dot, 'pill');
     const onOpen = () => 'map opened';
     const rendered = render({ session: session({ visiblyBusy: signal(true) }), onOpen });
     assert.equal(rendered.props.activity.label, 'Main working · Subagents 0 · Background 0');
@@ -181,9 +185,9 @@ for (const [version, name, pill] of [
     assert.equal(rendered.props.onOpen(), 'map opened');
 
     const renderPill = new Function(
-      'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Qs', 'oa', 'Ym', 'tU', 'oU', 'rU', 'uU', 'W91', 'tle', 'qY', 'df', 'ff', 'hf', 'gf',
+      'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Qs', 'oa', 'ta', 'Ym', 'tU', 'oU', 'rU', 'uU', 'pU', 'W91', 'tle', 'qY', 'df', 'ff', 'hf', 'gf', 'bf',
       `${componentSource(patched, pill)};return ${pill};`,
-    )(create, create, create, create, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp, noOp, noOp);
+    )(create, create, create, create, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp, noOp, noOp, noOp);
     const button = renderPill(rendered.props);
     assert.equal(button.type, 'button');
     assert.equal(button.props.onClick, onOpen);
@@ -215,7 +219,7 @@ test('unknown version is refused without modification', () => {
   assert.throws(() => patchBundle('unchanged', '9.9.9'), /Unsupported/);
 });
 
-for (const version of ['2.1.314', '2.1.318', '2.1.319']) {
+for (const version of ['2.1.314', '2.1.318', '2.1.319', '2.1.322']) {
   test(`${version}: apply, repeat apply, guarded restore, and exact restore`, (t) => {
     const original = installedOriginal(version);
     if (original === null) {
