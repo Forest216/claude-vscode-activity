@@ -50,6 +50,13 @@ const SUPPORTED = {
     styles: 'ta', pillStyles: 'pU', statusDot: 'bf',
     alwaysShow: [',Ze=l!==void 0&&De.size>0,', ',Ze=l!==void 0,'],
   },
+  '2.1.325': {
+    hash: '5bf0e85aeded6204050df563ab0f3f76dde93405d37df606a599d0fbc0f17b6c',
+    component: 'JOt', pill: 'lFn', session: 'e', open: 't', hook: 'It',
+    create: 'm', container: 'k', count: 'hj', waiting: 'C8', dot: 'v$e',
+    styles: 'na', pillStyles: 'CU', statusDot: 'vf',
+    alwaysShow: [',je=l!==void 0&&xe.size>0,', ',je=l!==void 0,'],
+  },
 };
 
 export const digest = (content) => createHash('sha256').update(content).digest('hex');
