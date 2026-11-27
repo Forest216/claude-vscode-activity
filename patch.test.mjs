@@ -141,7 +141,8 @@ function installedOriginal(version) {
 for (const [version, name, pill] of [
   ['2.1.312', 'Dy0', 'Nv5'], ['2.1.314', 'NMt', 'SNn'], ['2.1.317', 'GMt', 'GNn'],
   ['2.1.318', 'XMt', 'QNn'], ['2.1.319', 'kPt', 'jMn'], ['2.1.322', 'BPt', 'dPn'],
-  ['2.1.325', 'JOt', 'lFn'], ['2.1.326', 'kFt', 'iBn'], ['2.1.331', 'Ope', 'wze'],
+  ['2.1.325', 'JOt', 'lFn'], ['2.1.326', 'kFt', 'iBn'], ['2.1.329', 'FFt', 'QFn'],
+  ['2.1.331', 'Ope', 'wze'],
 ]) {
   test(`${version}: patch parses and preserves the task-map click handler`, (t) => {
     const original = installedOriginal(version);
@@ -172,6 +173,10 @@ for (const [version, name, pill] of [
       assert.ok(patched.includes(',qe=l!==void 0,') && !patched.includes(',qe=l!==void 0&&Ce.size>0,'),
         'pill shown without subagents');
     }
+    if (version === '2.1.329') {
+      assert.ok(patched.includes(',Ve=l!==void 0,') && !patched.includes(',Ve=l!==void 0&&xe.size>0,'),
+        'pill shown without subagents');
+    }
     if (version === '2.1.331') {
       assert.ok(patched.includes(',He=d!==void 0,') && !patched.includes(',He=d!==void 0&&Re.size>0,'),
         'pill shown without subagents');
@@ -188,10 +193,10 @@ for (const [version, name, pill] of [
     const dot = () => 'idle';
     const render = new Function(
       'claudeLocalActivitySummary', 'f0', 'Dt', 'Nt', 'Rt', 'F', 'm', 'ol', 'j$', 'Z$', 'X$', 'oj', 'aj', 'jR', 'f8', 'm8', 'y8', 'x8', 'fc1', 'sVe', 'mVe', 'vVe', 'BVe', 'XVe',
-      'It', 'hj', 'C8', 'v$e', 'Ct', '_j', 'kE', 'O$e', 'Ee', 'u', 'Tk', 'Eh', 'wK', pill,
+      'It', 'hj', 'C8', 'v$e', 'Ct', '_j', 'kE', 'O$e', 'Ee', 'u', 'Tk', 'Eh', 'wK', '_t', 'Lj', 'SE', 'P$e', pill,
       `${componentSource(patched, name)};return ${name};`,
     )(summarize, noOp, noOp, noOp, noOp, create, create, count, count, count, count, count, count, waiting, waiting, waiting, waiting, waiting, dot, dot, dot, dot, dot, dot,
-      noOp, count, waiting, dot, noOp, count, waiting, dot, noOp, create, count, waiting, dot, 'pill');
+      noOp, count, waiting, dot, noOp, count, waiting, dot, noOp, create, count, waiting, dot, noOp, count, waiting, dot, 'pill');
     const onOpen = () => 'map opened';
     const rendered = render({ session: session({ visiblyBusy: signal(true) }), onOpen });
     assert.equal(rendered.props.activity.label, 'Main working · Subagents 0 · Background 0');
@@ -201,10 +206,10 @@ for (const [version, name, pill] of [
 
     const renderPill = new Function(
       'R', 'k', 'F', 'm', 'r7', 'Zs', 'ea', 'Qs', 'oa', 'ta', 'Ym', 'tU', 'oU', 'rU', 'uU', 'pU', 'W91', 'tle', 'qY', 'df', 'ff', 'hf', 'gf', 'bf',
-      'na', 'CU', 'vf', 'LU', 'h', 'u', 'Hn', 'qb', 'gs',
+      'na', 'CU', 'vf', 'LU', 'h', 'u', 'Hn', 'qb', 'gs', 'ia', 'NU', '_f',
       `${componentSource(patched, pill)};return ${pill};`,
     )(create, create, create, create, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, noOp, noOp, noOp, noOp, noOp, noOp, noOp, noOp,
-      {}, {}, noOp, {}, create, create, {}, {}, noOp);
+      {}, {}, noOp, {}, create, create, {}, {}, noOp, {}, {}, noOp);
     const button = renderPill(rendered.props);
     assert.equal(button.type, 'button');
     assert.equal(button.props.onClick, onOpen);
@@ -236,7 +241,7 @@ test('unknown version is refused without modification', () => {
   assert.throws(() => patchBundle('unchanged', '9.9.9'), /Unsupported/);
 });
 
-for (const version of ['2.1.314', '2.1.318', '2.1.319', '2.1.322', '2.1.325', '2.1.326', '2.1.331']) {
+for (const version of ['2.1.314', '2.1.318', '2.1.319', '2.1.322', '2.1.325', '2.1.326', '2.1.329', '2.1.331']) {
   test(`${version}: apply, repeat apply, guarded restore, and exact restore`, (t) => {
     const original = installedOriginal(version);
     if (original === null) {

@@ -64,6 +64,13 @@ const SUPPORTED = {
     styles: 'na', pillStyles: 'LU', statusDot: 'vf',
     alwaysShow: [',qe=l!==void 0&&Ce.size>0,', ',qe=l!==void 0,'],
   },
+  '2.1.329': {
+    hash: '666d56f0370fa98748e305ab4ec5e593fccd3219a77fac5924df44b02152ef78',
+    component: 'FFt', pill: 'QFn', session: 'e', open: 't', hook: '_t',
+    create: 'm', container: 'k', count: 'Lj', waiting: 'SE', dot: 'P$e',
+    styles: 'ia', pillStyles: 'NU', statusDot: '_f',
+    alwaysShow: [',Ve=l!==void 0&&xe.size>0,', ',Ve=l!==void 0,'],
+  },
   '2.1.331': {
     hash: 'b043c87aba7f3799127ebe02843b62a3fdebd27dd4d878c38847f80413a891e3',
     component: 'Ope', pill: 'wze', session: 'e', open: 't', hook: 'Ee',
